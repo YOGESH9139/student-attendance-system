@@ -10,10 +10,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL || 'http://localhost:5173',
-    'https://your-frontend.vercel.app' // update after deploying
-  ],
+  origin: (origin, callback) => callback(null, true),
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
   credentials: true
