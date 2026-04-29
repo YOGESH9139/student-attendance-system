@@ -53,8 +53,7 @@ export function useBle() {
 
     try {
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: [bleServiceUUID] }],
-        // Provide the name as an optional parameter to help some Android stacks
+        filters: [{ name: bleDeviceName }],
         optionalServices: [bleServiceUUID]
       });
 
