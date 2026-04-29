@@ -181,9 +181,9 @@ export default function FaceSetup() {
                 </div>
               )}
             </div>
-            <div style={{display:'flex',justifyContent:'center',gap:'1rem'}}>
-              <button className="btn btn-ghost" onClick={retry}>Cancel</button>
-              <button className="btn btn-success btn-lg" onClick={capture} disabled={!detection}>
+            <div style={{display:'flex',justifyContent:'center',gap:'1rem', flexWrap:'wrap', width:'100%'}}>
+              <button className="btn btn-ghost w-full md:w-auto" onClick={retry} style={{flex:1, minWidth:'120px'}}>Cancel</button>
+              <button className="btn btn-success btn-lg w-full md:w-auto" onClick={capture} disabled={!detection} style={{flex:2, minWidth:'200px'}}>
                 <ScanFace size={18}/> Capture & Submit
               </button>
             </div>

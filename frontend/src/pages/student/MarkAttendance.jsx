@@ -22,6 +22,12 @@ export default function MarkAttendance() {
   const [storedDesc, setStoredDesc] = useState(null);    // student's enrolled descriptor
   const [timeLeft,   setTimeLeft]   = useState('');
 
+  // Pre-requisite checklist
+  const [chkBluetooth, setChkBluetooth] = useState(false);
+  const [chkLocation,  setChkLocation]  = useState(false);
+  const [chkChrome,    setChkChrome]    = useState(false);
+  const checklistOk = chkBluetooth && chkLocation && chkChrome;
+
   // BLE
   const { rssi, bleState, bleError, startScan, stopScan, isInside } = useBle();
 
@@ -188,19 +194,36 @@ export default function MarkAttendance() {
             <Bluetooth size={36} color="var(--primary)"/>
           </div>
           <h2 style={{fontWeight:700,marginBottom:'.5rem'}}>Step 1: Connect to Classroom Beacon</h2>
-          <p className="text-muted" style={{marginBottom:'1.5rem',fontSize:'.92rem'}}>
-            Make sure you are inside the classroom. Your browser will ask for Bluetooth permission.
-            Select <strong style={{color:'var(--primary)'}}>{session?.bleDeviceName}</strong> from the list.
+          <p className="text-muted" style={{marginBottom:'1rem',fontSize:'.92rem'}}>
+            Before connecting, please confirm the following to ensure it works on your phone:
           </p>
+
+          {bleState === 'idle' && (
+            <div style={{textAlign:'left', background:'var(--bg-color)', padding:'1rem', borderRadius:'8px', marginBottom:'1.5rem', fontSize:'0.9rem'}}>
+              <label style={{display:'flex', alignItems:'flex-start', gap:'0.75rem', marginBottom:'0.75rem', cursor:'pointer'}}>
+                <input type="checkbox" checked={chkBluetooth} onChange={e => setChkBluetooth(e.target.checked)} style={{marginTop:'0.2rem', width:'18px', height:'18px'}} />
+                <span style={{flex:1}}>I have turned <strong>ON Bluetooth</strong> in my phone settings.</span>
+              </label>
+              <label style={{display:'flex', alignItems:'flex-start', gap:'0.75rem', marginBottom:'0.75rem', cursor:'pointer'}}>
+                <input type="checkbox" checked={chkLocation} onChange={e => setChkLocation(e.target.checked)} style={{marginTop:'0.2rem', width:'18px', height:'18px'}} />
+                <span style={{flex:1}}>I have turned <strong>ON Location/GPS</strong> (Required by Android for scanning).</span>
+              </label>
+              <label style={{display:'flex', alignItems:'flex-start', gap:'0.75rem', cursor:'pointer'}}>
+                <input type="checkbox" checked={chkChrome} onChange={e => setChkChrome(e.target.checked)} style={{marginTop:'0.2rem', width:'18px', height:'18px'}} />
+                <span style={{flex:1}}>I have allowed Location permissions for Chrome/Browser.</span>
+              </label>
+            </div>
+          )}
 
           {bleError && <div className="alert alert-error mb-4"><AlertCircle size={16}/> {bleError}</div>}
 
           <RssiGauge rssi={rssi} rssiThreshold={session?.rssiThreshold || -75} bleState={bleState} />
 
           <button
-            className="btn btn-primary btn-lg mt-4"
+            className="btn btn-primary btn-lg mt-4 w-full md:w-auto"
             onClick={connectBle}
-            disabled={bleState === 'scanning' || bleState === 'connected'}
+            disabled={bleState === 'scanning' || bleState === 'connected' || (bleState === 'idle' && !checklistOk)}
+            style={{ width: '100%' }}
           >
             <Bluetooth size={18}/>
             {bleState === 'idle'     && 'Scan for Beacon'}
@@ -304,7 +327,7 @@ export default function MarkAttendance() {
             {new Date().toLocaleString()}
             {faceResult && ` · Face match score: ${faceResult.score}`}
           </p>
-          <div style={{display:'flex',gap:'1rem',justifyContent:'center',marginBottom:'1rem'}}>
+          <div style={{display:'flex',gap:'1rem',justifyContent:'center',flexWrap:'wrap',marginBottom:'1rem'}}>
             <div className="card" style={{padding:'.75rem 1.25rem',textAlign:'center',flex:1,border:'1px solid #bbf7d0'}}>
               <div style={{fontSize:'1.3rem'}}>📶</div>
               <div className="text-xs text-muted">BLE Verified</div>
